@@ -17,6 +17,9 @@ var env = nunjucks.configure('views', {noCache: true});
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
+var AutoEscapeExtension = require("nunjucks-autoescape")(nunjucks);
+env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
+
 // logging middleware
 app.use(morgan('dev'));
 // static middleware

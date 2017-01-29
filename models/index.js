@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = new Sequelize('postgres://localhost:5432/wikistack1', {logging: false});
+const marked = require('marked');
 
 var Page =  db.define('page', {
   title: {
@@ -30,7 +31,36 @@ var Page =  db.define('page', {
   }
 }, {
   getterMethods: {
-    route: function() {return '/wiki/' + this.urlTitle;}
+    route: function() {return '/wiki/' + this.urlTitle;},
+    renderedContent: function() {
+      return marked(this.content);
+    }
+  },
+  classMethods: {
+    findByTag: function(tag) {
+      // this is the constructor Page
+      return this.findAll({
+        where: {
+          tags: {
+            $overlap: [tag]
+          }
+        }
+      })
+    }
+  },
+  instanceMethods: {
+    findSimilar: function() {
+      return Page.findAll({
+        where: {
+          id: {
+            $ne: this.id
+          },
+          tags: {
+            $overlap: this.tags
+          }
+        }
+      });
+    }
   },
   hooks: {
     beforeValidate: function(page) {

@@ -1,20 +1,20 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <h3>{{ page.title }} <small> (<a href="PLACEHOLDER_URL_TITLE/similar">Similar</a>)</small></h3>
+  <h3>{{ page.title }} <small> (<a href="{{ page.route }}/similar">Similar</a>)</small></h3>
   <h4>by <a href="/users/{{  page.author.id }}">{{ page.author.name }}</a></h4>
   <div>
     <h5>Tags</h5>
     <ul>
     {% for tag in page.tags %}
       <li>
-        {{ tag }}
+        <a href="/wiki/lookup/{{ tag }}">{{ tag }}</a>
       </li>
     {% endfor %}
     </ul>
   </div>
   <hr/>
-  <div class="page-body">{{ page.content }}</div>
+  <div class="page-body">{% autoescape false %}{{ page.renderedContent }}{% endautoescape %}</div>
   <hr/>
   <a href="PLACEHOLDER_URL_TITLE/edit" class="btn btn-primary">edit this page</a>
   <a href="PLACEHOLDER_URL_TITLE/delete" class="btn btn-danger">delete this page</a>

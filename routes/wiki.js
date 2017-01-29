@@ -46,6 +46,26 @@ router.get('/add/', function(req, res, next) {
   res.render('addpage');
 });
 
+router.get('/lookup', function(req, res, next) {
+  var tag = req.query.lookup;
+
+  Page.findByTag(tag)
+  .then(function(pages) {
+    res.render('index', {pages: pages});
+  })
+  .catch(next);
+});
+
+router.get('/lookup/:tag', function(req, res, next) {
+  var tag = req.params.tag;
+
+  Page.findByTag(tag)
+  .then(function(similarPages) {
+    res.render('index', {pages: similarPages});
+  })
+  .catch(next);
+});
+
 router.get('/:urlTitle', function(req, res, next) {
   // ============ alternative using setAuthor, need to change variable names in wikipage.html
   // Page.findOne({
@@ -76,6 +96,22 @@ router.get('/:urlTitle', function(req, res, next) {
     } else {
       res.render('wikipage', {page: page});
     }
+  })
+  .catch(next);
+
+});
+
+router.get('/:urlTitle/similar', function(req, res, next) {
+  Page.findOne({
+    where: {
+      urlTitle: req.params.urlTitle
+    }
+  })
+  .then(function(page) {
+    return page.findSimilar();
+  })
+  .then(function(pages) {
+    res.render('index', {pages: pages});
   })
   .catch(next);
 
