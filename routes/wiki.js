@@ -24,7 +24,7 @@ router.post('/', function(req, res, next) {
       email: req.body.email
     }
   })
-  .spread(function(user, wasCreatedBool) {
+  .spread(function(user) {
     return Page.create({
       title: req.body.title,
       content: req.body.content,
@@ -52,7 +52,12 @@ router.get('/:urlTitle', function(req, res, next) {
     }
   })
   .then(function(page) {
-    res.render('wikipage', {page: page});
+    return page.getAuthor()
+    .then(function(user) {
+      page.user = user;
+
+      res.render('wikipage', {page: page});
+    });
   })
   .catch(next);
 

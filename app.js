@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const nunjucks = require('nunjucks');
 
 const wikiRouter = require('./routes/wiki');
+const usersRouter = require('./routes/users');
 
 const models = require('./models');
 const Page = models.Page;
@@ -25,9 +26,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // sync databases, listen to port
-Page.sync({force: true})
+Page.sync({})
 .then(function() {
-  return User.sync({force: true});
+  return User.sync({});
 })
 .then(function() {
   app.listen(3000, function() {
@@ -38,6 +39,7 @@ Page.sync({force: true})
 
 // routes
 app.use('/wiki', wikiRouter);
+app.use('/users', usersRouter);
 
 app.get('/', function(req, res, next) {
   res.render('index');

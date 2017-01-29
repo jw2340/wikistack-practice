@@ -38,6 +38,10 @@ var User =  db.define('user', {
     type: Sequelize.STRING,
     allowNull: false
   }
+}, {
+  getterMethods: {
+    route: function() {return '/users/' + this.id;}
+  }
 });
 
 Page.belongsTo(User, {as: 'author'});
