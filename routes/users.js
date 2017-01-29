@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+var Promise = require('sequelize').Promise;
 const models = require('../models');
 const Page = models.Page;
 const User = models.User;
@@ -27,8 +28,10 @@ router.get('/:userId', function (req, res, next) {
   .then(function(values) {
     var user = values[0];
     var pages = values[1];
-
     res.render('userpages', {pages: pages, user: user});
+  // ============== alternative with spread
+  // .spread(function(user, pages) {
+  //   res.render('userpages', {pages: pages, user: user});
   })
   .catch(next);
 

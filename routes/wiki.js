@@ -29,6 +29,7 @@ router.post('/', function(req, res, next) {
       title: req.body.title,
       content: req.body.content,
       status: req.body.status,
+      tags: req.body.tags
     })
     .then(function(page) {
       return page.setAuthor(user);
@@ -46,18 +47,35 @@ router.get('/add/', function(req, res, next) {
 });
 
 router.get('/:urlTitle', function(req, res, next) {
+  // ============ alternative using setAuthor, need to change variable names in wikipage.html
+  // Page.findOne({
+  //   where: {
+  //     urlTitle: req.params.urlTitle
+  //   }
+  // })
+  // .then(function(page) {
+  //   return page.getAuthor()
+  //   .then(function(user) {
+  //     page.user = user;
+  //     res.render('wikipage', {page: page});
+  //   });
+  // })
+  // .catch(next);
+
   Page.findOne({
     where: {
       urlTitle: req.params.urlTitle
-    }
+    },
+    include: [
+      {model: User, as: 'author'}
+    ]
   })
   .then(function(page) {
-    return page.getAuthor()
-    .then(function(user) {
-      page.user = user;
-
+    if (page === null) {
+      res.sendStatus(404);
+    } else {
       res.render('wikipage', {page: page});
-    });
+    }
   })
   .catch(next);
 
